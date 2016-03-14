@@ -1,4 +1,4 @@
-package com.lu.qa.lut.Activity;
+package com.lu.qa.lut;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;

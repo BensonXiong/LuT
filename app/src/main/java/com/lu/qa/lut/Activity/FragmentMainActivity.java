@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.lu.qa.lut.Fragment.MainTab01;
@@ -85,6 +86,7 @@ public class FragmentMainActivity extends Activity implements View.OnClickListen
         switch(index)
         {
             case 0:
+                ((ImageButton)mTabBtnWeixin.findViewById(R.id.btn_tab_bottom_weixin)).setImageResource(R.drawable.tab_weixin_pressed);
                 if(mTab01 == null)
                 {
                     mTab01 = new MainTab01();
@@ -96,6 +98,7 @@ public class FragmentMainActivity extends Activity implements View.OnClickListen
                 }
                 break;
             case 1:
+                ((ImageButton)mTabBtnWeixin.findViewById(R.id.btn_tab_bottom_friend)).setImageResource(R.drawable.tab_find_frd_pressed);
                 if(mTab02 == null)
                 {
                     mTab02 = new MainTab02();
@@ -107,6 +110,7 @@ public class FragmentMainActivity extends Activity implements View.OnClickListen
                 }
                 break;
             case 2:
+                ((ImageButton)mTabBtnWeixin.findViewById(R.id.btn_tab_bottom_setting)).setImageResource(R.drawable.tab_settings_pressed);
                 if(mTab03 == null)
                 {
                     mTab03 = new MainTab03();
@@ -134,5 +138,11 @@ public class FragmentMainActivity extends Activity implements View.OnClickListen
     }
 
     private void resetBtn() {
+        ((ImageButton)mTabBtnWeixin.findViewById(R.id.btn_tab_bottom_weixin)).setImageResource(R.drawable.tab_weixin_normal);
+        ((ImageButton)mTabBtnWeixin.findViewById(R.id.btn_tab_bottom_friend)).setImageResource(R.drawable.tab_find_frd_normal);
+        ((ImageButton)mTabBtnWeixin.findViewById(R.id.btn_tab_bottom_contact)).setImageResource(R.drawable.tab_address_normal);
+        ((ImageButton)mTabBtnWeixin.findViewById(R.id.btn_tab_bottom_setting)).setImageResource(R.drawable.tab_settings_normal);
+
+
     }
 }

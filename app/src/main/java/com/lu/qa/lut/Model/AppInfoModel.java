@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable;
 /**
  * Created by xiongzhihui on 16/3/15.
  */
-public class AppModel {
+public class AppInfoModel {
     private Drawable icon;
     private String processName;
     private String packageName;

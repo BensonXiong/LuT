@@ -80,9 +80,8 @@ public class FragmentMainActivity extends Activity implements View.OnClickListen
     private void setTabSelection(int index)
     {
         resetBtn();
-        
-        
         FragmentTransaction transaction = fragmentManager.beginTransaction();
+        hideFragments(transaction);
         switch(index)
         {
             case 0:
@@ -98,7 +97,7 @@ public class FragmentMainActivity extends Activity implements View.OnClickListen
                 }
                 break;
             case 1:
-                ((ImageButton)mTabBtnWeixin.findViewById(R.id.btn_tab_bottom_friend)).setImageResource(R.drawable.tab_find_frd_pressed);
+                ((ImageButton)mTabBtnFrd.findViewById(R.id.btn_tab_bottom_friend)).setImageResource(R.drawable.tab_find_frd_pressed);
                 if(mTab02 == null)
                 {
                     mTab02 = new MainTab02();
@@ -110,7 +109,7 @@ public class FragmentMainActivity extends Activity implements View.OnClickListen
                 }
                 break;
             case 2:
-                ((ImageButton)mTabBtnWeixin.findViewById(R.id.btn_tab_bottom_setting)).setImageResource(R.drawable.tab_settings_pressed);
+                ((ImageButton)mTabBtnAddress.findViewById(R.id.btn_tab_bottom_contact)).setImageResource(R.drawable.tab_address_pressed);
                 if(mTab03 == null)
                 {
                     mTab03 = new MainTab03();
@@ -122,6 +121,7 @@ public class FragmentMainActivity extends Activity implements View.OnClickListen
                 }
                 break;
             case 3:
+                ((ImageButton)mTabBtnSettings.findViewById(R.id.btn_tab_bottom_setting)).setImageResource(R.drawable.tab_settings_pressed);
                 if(mTab04 == null)
                 {
                     mTab04 = new MainTab04();
@@ -137,11 +137,30 @@ public class FragmentMainActivity extends Activity implements View.OnClickListen
         transaction.commit();
     }
 
+    private void hideFragments(FragmentTransaction transaction) {
+        if(mTab01 !=null)
+        {
+            transaction.hide(mTab01);
+        }
+        if(mTab02 !=null)
+        {
+            transaction.hide(mTab02);
+        }
+        if(mTab03 !=null)
+        {
+            transaction.hide(mTab03);
+        }
+        if(mTab04 !=null)
+        {
+            transaction.hide(mTab04);
+        }
+    }
+
     private void resetBtn() {
         ((ImageButton)mTabBtnWeixin.findViewById(R.id.btn_tab_bottom_weixin)).setImageResource(R.drawable.tab_weixin_normal);
-        ((ImageButton)mTabBtnWeixin.findViewById(R.id.btn_tab_bottom_friend)).setImageResource(R.drawable.tab_find_frd_normal);
-        ((ImageButton)mTabBtnWeixin.findViewById(R.id.btn_tab_bottom_contact)).setImageResource(R.drawable.tab_address_normal);
-        ((ImageButton)mTabBtnWeixin.findViewById(R.id.btn_tab_bottom_setting)).setImageResource(R.drawable.tab_settings_normal);
+        ((ImageButton)mTabBtnFrd.findViewById(R.id.btn_tab_bottom_friend)).setImageResource(R.drawable.tab_find_frd_normal);
+        ((ImageButton)mTabBtnAddress.findViewById(R.id.btn_tab_bottom_contact)).setImageResource(R.drawable.tab_address_normal);
+        ((ImageButton)mTabBtnSettings.findViewById(R.id.btn_tab_bottom_setting)).setImageResource(R.drawable.tab_settings_normal);
 
 
     }

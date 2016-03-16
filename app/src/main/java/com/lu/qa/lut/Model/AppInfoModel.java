@@ -2,10 +2,12 @@ package com.lu.qa.lut.Model;
 
 import android.graphics.drawable.Drawable;
 
+import java.util.Comparator;
+
 /**
  * Created by xiongzhihui on 16/3/15.
  */
-public class AppInfoModel {
+public class AppInfoModel implements Comparable<AppInfoModel> {
     private Drawable icon;
     private String processName;
     private String packageName;
@@ -50,5 +52,10 @@ public class AppInfoModel {
 
     public void setProcessName(String processName) {
         this.processName = processName;
+    }
+
+    @Override
+    public int compareTo(AppInfoModel arg0) {
+        return (this.getProcessName().compareTo(arg0.getProcessName()));
     }
 }

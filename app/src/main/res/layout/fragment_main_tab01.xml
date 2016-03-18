@@ -3,7 +3,10 @@
     android:layout_height="match_parent" tools:context="com.lu.qa.lut.Fragment.MainTab01">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="hello_blank_fragment1" />
+
+    <ListView
+        android:id="@+id/main_tab01_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></ListView>
 
 </FrameLayout>

@@ -33,10 +33,7 @@ public class MainTab01 extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_main_tab01,container,false);
         ListView lv = (ListView) view.findViewById(R.id.main_tab01_list);
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(),getData(),R.layout.activity_main,new String[]{"title","info","img"},new int[]{R.id.title,R.id.info,R.id.img});
-
-        lv.setAdapter(adapter);
-        return view;
+       return view;
     }
 
     private List<Map<String,Object>> getData(){

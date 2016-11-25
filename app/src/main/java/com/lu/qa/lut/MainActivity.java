@@ -1,6 +1,9 @@
 package com.lu.qa.lut;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -21,6 +24,7 @@ import com.lu.qa.lut.Model.AppInfoModel;
 import com.lu.qa.lut.Service.LuService;
 import com.lu.qa.lut.Utils.ProcessInfo;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,9 +45,11 @@ public class MainActivity extends BaseActivity {
     private Button btnTest;
     private LinearLayout layBtnSet;
     private Intent monitorServiceIntent;
-    private int pid,uid;
+    private int pid, uid;
+    private UpdateReceiver updateReceiver;
 
     private Long mLastExitime = (long) 0;
+    private boolean isServiceStop = false;
 
 
     @Override
@@ -67,6 +73,12 @@ public class MainActivity extends BaseActivity {
                         String processName = adapter.checkedAppInfo.getProcessName();
                         Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
                         String fromActivity = intent.resolveActivity(getPackageManager()).getShortClassName();
+                        // clear logcat
+                        try {
+                            Runtime.getRuntime().exec("logcat -c");
+                        } catch (IOException e) {
+                            Log.d(LOG_TAG, e.getMessage());
+                        }
                         startActivity(intent);
                         waitForAppStart(packageName);
                         monitorServiceIntent.putExtra("processName", processName);
@@ -80,41 +92,42 @@ public class MainActivity extends BaseActivity {
                         btnTest.setText(start_test);
                         Toast.makeText(MainActivity.this, getString(R.string.choose_app_toast), Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     btnTest.setText(start_test);
-                    Toast.makeText(MainActivity.this,"stop now",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "stop now", Toast.LENGTH_SHORT).show();
                     stopService(monitorServiceIntent);
                 }
 
 
-
             }
         });
-        lstViProgramme.setAdapter(new AppListAdapter(this,processInfo));
+        lstViProgramme.setAdapter(new AppListAdapter(this, processInfo));
         lstViProgramme.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                RadioButton radioButton = (RadioButton) ((LinearLayout)view).getChildAt(0);
+                RadioButton radioButton = (RadioButton) ((LinearLayout) view).getChildAt(0);
                 radioButton.setChecked(true);
             }
         });
 
         ivGoBack.setVisibility(ImageView.INVISIBLE);
 
-
+        updateReceiver = new UpdateReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(LuService.SERVICE_ACTION);
+        registerReceiver(updateReceiver, filter);
 
 
     }
 
 
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if( keyCode == KeyEvent.KEYCODE_BACK){
-            if ( (System.currentTimeMillis() - mLastExitime ) > 2000){
-                Toast.makeText(this,R.string.quite_alert,Toast.LENGTH_LONG).show();
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - mLastExitime) > 2000) {
+                Toast.makeText(this, R.string.quite_alert, Toast.LENGTH_LONG).show();
                 mLastExitime = System.currentTimeMillis();
-            }else{
+            } else {
                 finish();
             }
             return true;
@@ -123,6 +136,19 @@ public class MainActivity extends BaseActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isServiceStop) {
+            btnTest.setText(getString(R.string.start_test));
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(updateReceiver);
+    }
 
     private void initViews() {
         ivGoBack = (ImageView) findViewById(R.id.go_back);
@@ -133,12 +159,12 @@ public class MainActivity extends BaseActivity {
         layBtnSet = (LinearLayout) findViewById(R.id.lay_btn_set);
     }
 
-    private void waitForAppStart(String packageName){
-        Log.d(LOG_TAG,"wait for app start");
+    private void waitForAppStart(String packageName) {
+        Log.d(LOG_TAG, "wait for app start");
         long startTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() < startTime + TIMEOUT){
-            pid = processInfo.getPidByPackageName(this,packageName);
-            if ( pid != 0){
+        while (System.currentTimeMillis() < startTime + TIMEOUT) {
+            pid = processInfo.getPidByPackageName(this, packageName);
+            if (pid != 0) {
                 break;
             }
 
@@ -146,27 +172,15 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    private class UpdateReceiver extends BroadcastReceiver {
 
-    private List<Map<String,Object>> getData(){
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            isServiceStop = intent.getExtras().getBoolean("isServiceStop");
+            if (isServiceStop) {
+                btnTest.setText(getString(R.string.start_test));
+            }
 
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("title", "G1");
-        map.put("info", "google 1");
-        map.put("img", R.drawable.i1);
-        list.add(map);
-
-        map = new HashMap<String, Object>();
-        map.put("title", "G2");
-        map.put("info", "google 2");
-        map.put("img", R.drawable.i2);
-        list.add(map);
-
-        map = new HashMap<String, Object>();
-        map.put("title", "G3");
-        map.put("info", "google 3");
-        map.put("img", R.drawable.i3);
-        list.add(map);
-        return list;
+        }
     }
 }

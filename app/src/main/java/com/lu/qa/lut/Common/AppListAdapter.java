@@ -22,14 +22,14 @@ import java.util.Map;
 /**
  * Created by Benson on 10/25/16.
  */
-public class AppListAdapter extends BaseAdapter{
+public class AppListAdapter extends BaseAdapter {
     private LayoutInflater mInflater = null;
     public List<AppInfoModel> mData;
     private RadioButton lastCheckedPosition;
     public AppInfoModel checkedAppInfo;
 
 
-    public AppListAdapter(Context context, ProcessInfo processInfo){
+    public AppListAdapter(Context context, ProcessInfo processInfo) {
         this.mData = processInfo.getInstalledApps(context);
         this.mInflater = LayoutInflater.from(context);
 
@@ -54,7 +54,7 @@ public class AppListAdapter extends BaseAdapter{
     public View getView(int position, View convertView, ViewGroup parent) {
         AppInfoModel appInfoModel = (AppInfoModel) getItem(position);
         ViewHolder holder;
-        if(convertView == null) {
+        if (convertView == null) {
             convertView = mInflater.inflate(R.layout.list_item, parent, false);
             holder = new ViewHolder();
             holder.appIcon = (ImageView) convertView.findViewById(R.id.image);
@@ -63,7 +63,7 @@ public class AppListAdapter extends BaseAdapter{
             holder.radioButton.setFocusable(false);
             holder.radioButton.setOnCheckedChangeListener(checkedChangeListener);
             convertView.setTag(holder);
-        }else{
+        } else {
 
             holder = (ViewHolder) convertView.getTag();
         }
@@ -78,11 +78,11 @@ public class AppListAdapter extends BaseAdapter{
     CompoundButton.OnCheckedChangeListener checkedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-            if(isChecked){
-                if( (lastCheckedPosition != null) && (lastCheckedPosition.getId() != compoundButton.getId())){
+            if (isChecked) {
+                if ((lastCheckedPosition != null) && (lastCheckedPosition.getId() != compoundButton.getId())) {
                     lastCheckedPosition.setChecked(false);
                 }
-                checkedAppInfo =  mData.get(compoundButton.getId());
+                checkedAppInfo = mData.get(compoundButton.getId());
                 lastCheckedPosition = (RadioButton) compoundButton;
 
             }
@@ -92,8 +92,7 @@ public class AppListAdapter extends BaseAdapter{
     };
 
 
-
-    static class ViewHolder{
+    static class ViewHolder {
         public TextView appName;
         public ImageView appIcon;
         public RadioButton radioButton;

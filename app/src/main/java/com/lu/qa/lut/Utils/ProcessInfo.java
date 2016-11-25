@@ -26,18 +26,17 @@ public class ProcessInfo {
     private static final String PACKAGE_NAME = "com.lu.qa.lut";
     private static final int ANDROID_M = 22;
 
-    public List<AppInfoModel> getRunningProcess(Context context){
+    public List<AppInfoModel> getRunningProcess(Context context) {
         AppInfoModel appInfoModel = new AppInfoModel();
         PackageManager pm = context.getPackageManager();
 
         List<AppInfoModel> appRunningList = new ArrayList<AppInfoModel>();
-        for(ApplicationInfo appinfo:getApplicationList(context)){
-            if( ((appinfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0) || ((appinfo.processName != null) && (appinfo.processName.equals(PACKAGE_NAME))))
-            {
-                    continue;
+        for (ApplicationInfo appinfo : getApplicationList(context)) {
+            if (((appinfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0) || ((appinfo.processName != null) && (appinfo.processName.equals(PACKAGE_NAME)))) {
+                continue;
             }
-            for(AndroidAppProcess runningProcess:getRunningAppProcess(context)){
-                if ((runningProcess.name != null) && runningProcess.name.equals(appinfo.processName)){
+            for (AndroidAppProcess runningProcess : getRunningAppProcess(context)) {
+                if ((runningProcess.name != null) && runningProcess.name.equals(appinfo.processName)) {
                     appInfoModel.setPid(runningProcess.pid);
                     appInfoModel.setUid(runningProcess.uid);
                     break;
@@ -53,14 +52,14 @@ public class ProcessInfo {
         return appRunningList;
     }
 
-    public List<AppInfoModel> getInstalledApps(Context context){
-        Log.i(LOG_TAG,"get installed apps");
+    public List<AppInfoModel> getInstalledApps(Context context) {
+        Log.i(LOG_TAG, "get installed apps");
         List<AppInfoModel> processList = new ArrayList<AppInfoModel>();
         PackageManager pm = context.getPackageManager();
-        for(ApplicationInfo appInfo : getApplicationList(context)){
+        for (ApplicationInfo appInfo : getApplicationList(context)) {
             AppInfoModel appInfoModel = new AppInfoModel();
-            if ( ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM ) > 0 ) || ((appInfo.processName != null) &&
-                    (appInfo.processName.equals(PACKAGE_NAME)))){
+            if (((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0) || ((appInfo.processName != null) &&
+                    (appInfo.processName.equals(PACKAGE_NAME)))) {
                 continue;
             }
             appInfoModel.setPackageName(appInfo.processName);
@@ -72,11 +71,11 @@ public class ProcessInfo {
         return processList;
     }
 
-    public int getPidByPackageName(Context context,String packaeName){
-        Log.i(LOG_TAG,"start to get the launched pid");
+    public int getPidByPackageName(Context context, String packageName) {
+        Log.i(LOG_TAG, "start to get the launched pid");
 
-        for(AndroidAppProcess runProcessInfo : getRunningAppProcess(context)){
-            if( (runProcessInfo.name != null) && runProcessInfo.name.equals(packaeName)){
+        for (AndroidAppProcess runProcessInfo : getRunningAppProcess(context)) {
+            if ((runProcessInfo.name != null) && runProcessInfo.name.equals(packageName)) {
                 return runProcessInfo.pid;
             }
         }
@@ -85,22 +84,32 @@ public class ProcessInfo {
 
     }
 
+
+    public AppInfoModel getProgrameByPackageName(Context context, String packageName) {
+        for (AppInfoModel appInfoModel : getRunningProcess(context)) {
+            if ((appInfoModel.getPackageName() != null) && appInfoModel.getPackageName().equals(packageName)) {
+                return appInfoModel;
+            }
+        }
+        return null;
+
+    }
+
     /*
     use the third-party library to resolve the problem
     getRunningAppProcesses return itself in API 22
     https://github.com/jaredrummler/AndroidProcesses
      */
-    private List<AndroidAppProcess> getRunningAppProcess(Context context){
+    private List<AndroidAppProcess> getRunningAppProcess(Context context) {
         List<AndroidAppProcess> processes = AndroidProcesses.getRunningAppProcesses();
         return processes;
     }
 
 
-    private List<ApplicationInfo> getApplicationList(Context context){
+    private List<ApplicationInfo> getApplicationList(Context context) {
         PackageManager pm = context.getApplicationContext().getPackageManager();
         return pm.getInstalledApplications(0);   // 0 to get all installed packages
     }
-
 
 
 }

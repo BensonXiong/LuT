@@ -56,7 +56,7 @@ public class MemoryInfo {
         return outInfo.availMem / 1024;
     }
 
-    public long getPidMemorySize(int pid, Context context){
+    public int getPidMemorySize(int pid, Context context){
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         int []memIds = new int[]{pid};
         Debug.MemoryInfo[] memInfos = am.getProcessMemoryInfo(memIds);
@@ -67,6 +67,7 @@ public class MemoryInfo {
     public String getSDKVersion(){
         return Build.VERSION.RELEASE;
     }
+
 
     public String getModel(){
         return Build.MODEL;

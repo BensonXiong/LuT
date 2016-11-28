@@ -96,7 +96,7 @@ public class LuService extends Service {
     private String resultFilePath;
     private FileOutputStream out;
     private OutputStreamWriter osw;
-    private BufferedWriter bw;
+
     private CpuInfo cpuInfo;
     private int uid;
     private boolean isRoot;
@@ -116,6 +116,9 @@ public class LuService extends Service {
     private static final String BLANK_STRING = "";
     private boolean isAutoStop = false;
     private boolean isStop = false;
+
+
+    public static  BufferedWriter bw;
 
 
     //监听信息入口
@@ -166,7 +169,7 @@ public class LuService extends Service {
             e.printStackTrace();
         }
 
-        cpuInfo = new CpuInfo(pid, Integer.toString(uid));
+        cpuInfo = new CpuInfo(getBaseContext(),pid, Integer.toString(uid));
         readSettingInfo();
         if (isFloating) {
             floatingView = LayoutInflater.from(this).inflate(R.layout.floating, null);
@@ -289,6 +292,14 @@ public class LuService extends Service {
         }
     };
 
+    public static void writeToCSV(String content){
+        try {
+            bw.write(content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void dataRefresh() {
         int pidMemory = memoryInfo.getPidMemorySize(pid, getBaseContext());
         long freeMemory = memoryInfo.getFreeMemorySize(getBaseContext());
@@ -357,7 +368,7 @@ public class LuService extends Service {
                         if (programe != null && programe.getPid() > 0) {
                             pid = programe.getPid();
                             uid = programe.getUid();
-                            cpuInfo = new CpuInfo(pid,
+                            cpuInfo = new CpuInfo(getBaseContext(),pid,
                                     Integer.toString(uid));
                         }
                     }
@@ -406,11 +417,11 @@ public class LuService extends Service {
 
     private void createResultCsv() {
         Calendar calender = Calendar.getInstance();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String mDateTime;
         String heapData = "";
         // Todo if sdk google_sdk else
-        mDateTime = formatter.format(calender.getTime().getTime());
+        mDateTime = dateFormater.format(calender.getTime().getTime());
         if (android.os.Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             // 在4.0以下的低版本上/sdcard连接至/mnt/sdcard，而4.0以上版本则连接至/storage/sdcard0，所以有外接sdcard，/sdcard路径一定存在
             resultFilePath = "/sdcard" + File.separator + "Lu_TestResult_"
@@ -433,7 +444,8 @@ public class LuService extends Service {
             for (int i = 0; i < cpuList.size(); i++) {
                 multiCpuTitle = Constants.COMMA + cpuList.get(i) + getString(R.string.total_usage);
             }
-            bw.write(getString(R.string.process_package) + Constants.COMMA
+
+            writeToCSV(getString(R.string.process_package) + Constants.COMMA
                     + packageName + Constants.LINE_END
                     + getString(R.string.process_name) + Constants.COMMA
                     + processName + Constants.LINE_END
@@ -450,7 +462,7 @@ public class LuService extends Service {
                     + Constants.LINE_END);
 
             if (isAllowedToReadLogs()) {
-                bw.write(START_TIME);
+                writeToCSV(START_TIME);
 
             }
 
@@ -458,7 +470,7 @@ public class LuService extends Service {
                 heapData = getString(R.string.native_heap) + Constants.COMMA
                         + getString(R.string.dalvik_heap) + Constants.COMMA;
             }
-            bw.write(getString(R.string.timestamp) + Constants.COMMA
+            writeToCSV(getString(R.string.timestamp) + Constants.COMMA
                     + getString(R.string.top_activity) + Constants.COMMA
                     + heapData + getString(R.string.used_mem_PSS)
                     + Constants.COMMA + getString(R.string.used_mem_ratio)
@@ -485,6 +497,7 @@ public class LuService extends Service {
         delaytime = 1000;
         isAutoStop = false;
         isStop = false;
+        isFloating = true;
 
     }
 

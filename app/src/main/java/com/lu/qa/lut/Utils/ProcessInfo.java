@@ -95,6 +95,15 @@ public class ProcessInfo {
 
     }
 
+    public static String getTopActivity(Context context){
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> runningTaskInfos = am.getRunningTasks(1);
+        if(runningTaskInfos != null){
+            return (runningTaskInfos.get(0).topActivity).toString();
+        }
+        return  null;
+    }
+
     /*
     use the third-party library to resolve the problem
     getRunningAppProcesses return itself in API 22

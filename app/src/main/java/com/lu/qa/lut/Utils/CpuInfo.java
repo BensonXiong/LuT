@@ -1,9 +1,13 @@
 package com.lu.qa.lut.Utils;
 
+import android.content.Context;
 import android.os.Build;
 import android.provider.SyncStateContract;
 import android.util.Log;
 import android.util.StringBuilderPrinter;
+
+import com.lu.qa.lut.R;
+import com.lu.qa.lut.Service.LuService;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -25,6 +29,9 @@ import java.util.regex.Pattern;
  */
 public class CpuInfo {
     private static final String LOG_TAG = "LuT" + CpuInfo.class.getSimpleName();
+    private final long totalMemorySize;
+    private final ArrayList<String> cpuUsedRatio;
+    private final Context context;
 
 
     private ArrayList<Long> idleCpu = new ArrayList<>();
@@ -38,6 +45,7 @@ public class CpuInfo {
     private int pid;
     private long processCpuTmp;
     private TrafficInfo trafficInfo;
+    private MemoryInfo memoryinfo;
     private String processCpuRatio = "";
     private ArrayList<String> cpuUsedRation = new ArrayList<String>();
     private ArrayList<String> totalCpuRatio = new ArrayList<String>();
@@ -51,9 +59,15 @@ public class CpuInfo {
     private static final String CPU_INFO_PATH = "/proc/cpuinfo";
 
 
-    public CpuInfo(int pid,String uid){
+    public CpuInfo(Context context,int pid,String uid){
         this.pid = pid;
+        this.context = context;
         trafficInfo = new TrafficInfo(uid);
+        dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        memoryinfo = new MemoryInfo();
+        totalMemorySize = memoryinfo.getTotalMemory();
+        cpuUsedRatio = new ArrayList<String>();
+
     }
 
     public void readCpuStat(){
@@ -163,14 +177,40 @@ public class CpuInfo {
                     processCpuTmp = processCpu;
                     idleCpuTmp = (ArrayList<Long>) idleCpu.clone();
                 }
+                // 多核cpu的值写入csv文件中
+                for (int i = 0; i < getCpuNum() - totalCpuRatio.size() + 1; i++) {
+                    totalCpuBuffer.append("0.00,");
+                }
+                long pidMemory = memoryinfo.getPidMemorySize(pid, context);
+                String pidMemoryTmp = format.format((double)pidMemory / 1024);
+                long freeMemory = memoryinfo.getFreeMemorySize(context);
+                String freeMemoryTmp = format.format((double)freeMemory / 1024);
+                String percent = context.getString(R.string.stat_error);
+                if(totalMemorySize != 0){
+                    percent = format.format( (double) pidMemory / (double) totalMemorySize * 100);
+                }
 
                 if (isPosiive(processCpuRatio) && isPosiive(totalCpuRatio.get(0))){
+                    String trafficValue;
+                    if ( traffic == -1){
+                        trafficValue = Constants.NA;
+                    } else {
+                        trafficValue = String.valueOf(traffic);
+                    }
+                    if(isRoot){
+                        String [][] heapArray = MemoryInfo.getHeapSize(pid,context);
+                        heapData = heapArray[0][1]+"/"+heapArray[0][0]+Constants.COMMA+heapArray[1][1]+"/"+heapArray[1][0]+Constants.COMMA;
+                    }
+                    LuService.writeToCSV(mDateTime2 + Constants.COMMA + ProcessInfo.getTopActivity(context) + Constants.COMMA + heapData + pidMemoryTmp
+                            + Constants.COMMA + percent + Constants.COMMA + freeMemoryTmp + Constants.COMMA + processCpuRatio + Constants.COMMA
+                            + totalCpuBuffer.toString() + trafficValue + Constants.COMMA + totalBatt + Constants.COMMA + currentBatt + Constants.COMMA
+                            + temperature + Constants.COMMA + voltage + Constants.COMMA + fps + Constants.LINE_END);
                     totalCpuTmp = (ArrayList<Long>) totalCpu.clone();
                     processCpuTmp = processCpu;
-                    idleCpuTmp = (ArrayList<Long>) idleCpuTmp.clone();
-                    cpuUsedRation.add(processCpuRatio);
-                    cpuUsedRation.add(totalCpuRatio.get(0));
-                    cpuUsedRation.add(String.valueOf(traffic));
+                    idleCpuTmp = (ArrayList<Long>) idleCpu.clone();
+                    cpuUsedRatio.add(processCpuRatio);
+                    cpuUsedRatio.add(totalCpuRatio.get(0));
+                    cpuUsedRatio.add(trafficValue);
                 }
 
             }

@@ -4,10 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -55,7 +58,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(getWindow().FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
         initViews();
@@ -110,7 +113,10 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+        nbTitle.setText(getString(R.string.app_name));
         ivGoBack.setVisibility(ImageView.INVISIBLE);
+        ivBtnSet.setImageResource(R.drawable.settings_button);
+        ivBtnSet.setVisibility(ImageView.INVISIBLE);
 
         updateReceiver = new UpdateReceiver();
         IntentFilter filter = new IntentFilter();

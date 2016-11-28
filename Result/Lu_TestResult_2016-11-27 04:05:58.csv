@@ -1,0 +1,13 @@
+Package Name,com.lufax.android
+App Name,陆金所
+App PID,22045
+Device Memory Size(MB),1963.22MB
+Device CPU Type,
+Android Version,4.2.2
+Device Brand/Model,HUAWEI G750-T01
+UID,10080
+Timestamp,Top Activity Name,App Used Memory PSS(MB),App Used Memory(%),System Available Memory(MB),App Used CPU(%),Total Used CPU(%),cpu7 Total Usage(%),Net Traffic(KB),Battery(%),Current(mA),Temperature(C),Voltage(V),FPS
+Note: for unsupported devices refer to: https://github.com/NetEase/Emmagee/wiki/Some-devices-are-not-supported
+Current: negative for discharging while positive for charging
+Start time: empty means either the app has been started or failed to fetch start time
+N/A: not supported or data exception

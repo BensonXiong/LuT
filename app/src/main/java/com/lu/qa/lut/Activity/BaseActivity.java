@@ -1,11 +1,12 @@
 package com.lu.qa.lut.Activity;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.lu.qa.lut.Common.ActivityCollector;
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
